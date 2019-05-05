@@ -12,9 +12,7 @@ namespace _2048ConsoleGame
         {
             GameBoard gameBoard = new GameBoard();
             gameBoard.DisplayBoard();
-            Console.ReadKey();
+            gameBoard.PlayGame();
         }
-
-
     }
 }
