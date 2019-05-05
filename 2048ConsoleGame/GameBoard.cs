@@ -12,10 +12,22 @@ namespace _2048ConsoleGame
         {
             this.BoardTiles = new int[4, 4];
             CurrentScore = 0;
-            BoardTiles[1, 1] = 2;
-            BoardTiles[1, 2] = 2;
-            BoardTiles[2, 2] = 2;
-            BoardTiles[3, 2] = 2;
+            BoardTiles[0, 0] = 1;
+            BoardTiles[0, 1] = 2;
+            BoardTiles[0, 2] = 3;
+            BoardTiles[0, 3] = 4;
+            BoardTiles[1, 0] = 5;
+            BoardTiles[1, 1] = 6;
+            BoardTiles[1, 2] = 7;
+            BoardTiles[1, 3] = 8;
+            BoardTiles[2, 0] = 9;
+            BoardTiles[2, 1] = 10;
+            BoardTiles[2, 2] = 11;
+            BoardTiles[2, 3] = 12;
+            BoardTiles[3, 0] = 13;
+            BoardTiles[3, 1] = 14;
+            BoardTiles[3, 2] = 15;
+            BoardTiles[3, 3] = 16;
         }
 
         public void DisplayBoard()
@@ -100,7 +112,14 @@ namespace _2048ConsoleGame
 
             Func<int[,], int, int, bool> DoValuesMatch = isVertical ? new Func<int[,], int, int, bool>((i, j, k) => i[k, j] == i[k - IncreaseOrDecrease, j]) : new Func<int[,], int, int, bool>((i, j, k) => i[j, k] == i[j, k - IncreaseOrDecrease]);
 
-            
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = StartIndex; j >= EndIndex; j--)
+                {
+                    Console.WriteLine("Order of movement");
+                    Console.WriteLine(BoardTiles[i,j]);
+                }
+            }
             //For each cell in row or column, starting at game edge
             //if item to move == space to take, multiply them
             //replace moved cell with 0, check to see if item can move again
