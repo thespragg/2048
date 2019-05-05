@@ -40,17 +40,9 @@ namespace _2048ConsoleGame
             do
             {
                 List<EmptyCells> emptyCells = BoardTiles.GetEmpty();
-                Random rng = new Random();
 
                 if(emptyCells.Count != 0) {
-                    int index = rng.Next(0, emptyCells.Count - 1);
-                    EmptyCells SelectedCell = emptyCells[index];
-                    int SelectIntToInsert = rng.Next(1, 4);
-
-                    if (SelectIntToInsert == 3) SelectIntToInsert = 4;
-                    else SelectIntToInsert = 2;
-
-                    BoardTiles[SelectedCell.XIndex, SelectedCell.YIndex] = SelectIntToInsert;
+                    InsertTwoOrFour(emptyCells);
                     DisplayBoard();
                 }
                 var input = Console.ReadKey();
@@ -67,6 +59,17 @@ namespace _2048ConsoleGame
                 {
                 }
             } while (isPlaying);
+        }
+
+        public void InsertTwoOrFour(List<EmptyCells> emptyCells)
+        {
+            Random rng = new Random();
+            int index = rng.Next(0, emptyCells.Count - 1);
+            EmptyCells SelectedCell = emptyCells[index];
+            int SelectIntToInsert = rng.Next(1, 10);
+            if (SelectIntToInsert == 9) SelectIntToInsert = 4;
+            else SelectIntToInsert = 2;
+            BoardTiles[SelectedCell.XIndex, SelectedCell.YIndex] = SelectIntToInsert;
         }
     }
 }
