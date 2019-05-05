@@ -5,7 +5,7 @@ namespace _2048ConsoleGame
 {
     public class GameBoard
     {
-        public int[,] BoardTiles { get; set; }
+        public int[,] BoardTiles;
         public int CurrentScore { get; set; }
 
         public GameBoard()
@@ -95,6 +95,8 @@ namespace _2048ConsoleGame
 
         public void MoveBoard(Direction direction)
         {
+            Console.Clear();
+            DisplayBoard();
             //Assert if vertical or horizontal
             bool isVertical = direction == Direction.Up || direction == Direction.Down;
             //Assert if +ve or -ve
@@ -109,17 +111,26 @@ namespace _2048ConsoleGame
             Func<int[,], int, int, int> GetValueInNewCell = isVertical ? new Func<int[,], int, int, int>((i, j, k) => i[k, j]) : new Func<int[,], int, int, int>((i, j, k) => i[k, j]);
             //Function to set the value in the new cell
             Action<int[,], int, int, int> SetValueInNewCell = isVertical ? new Action<int[,], int, int, int>((i, j, k, l) => i[k, j] = l) : new Action<int[,], int, int, int>((i, j, k, l) => i[j, k] = l);
-
             Func<int[,], int, int, bool> DoValuesMatch = isVertical ? new Func<int[,], int, int, bool>((i, j, k) => i[k, j] == i[k - IncreaseOrDecrease, j]) : new Func<int[,], int, int, bool>((i, j, k) => i[j, k] == i[j, k - IncreaseOrDecrease]);
 
-            for (int i = 0; i < 4; i++)
+            //Allows loop to continue whethers it's looping forward or back
+            bool ContinueLoop(int i) => Math.Min(StartIndex, EndIndex) <= i && Math.Max(StartIndex, EndIndex) >= i;
+            int IncrementIndex(ref int i) => isPositive ? i++ : i--;
+
+            for (int i = 0;i<4;i++)
             {
-                for (int j = StartIndex; j >= EndIndex; j--)
+                for (int j = StartIndex; ContinueLoop(j); IncrementIndex(ref j))
                 {
-                    Console.WriteLine("Order of movement");
-                    Console.WriteLine(BoardTiles[i,j]);
+                    if (isVertical)
+                    {
+                        Console.WriteLine(BoardTiles[j, i]);
+                    } else
+                    {
+                        Console.WriteLine(BoardTiles[i, j]);
+                    }
                 }
             }
+
             //For each cell in row or column, starting at game edge
             //if item to move == space to take, multiply them
             //replace moved cell with 0, check to see if item can move again
