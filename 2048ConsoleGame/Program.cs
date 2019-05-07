@@ -11,6 +11,8 @@ namespace _2048ConsoleGame
         static void Main(string[] args)
         {
             GameBoard gameBoard = new GameBoard();
+            List<EmptyCells> emptyCells = gameBoard.BoardTiles.GetEmpty();
+            gameBoard.InsertTwoOrFour(emptyCells);
             gameBoard.DisplayBoard();
             gameBoard.PlayGame();
         }

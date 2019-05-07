@@ -12,22 +12,6 @@ namespace _2048ConsoleGame
         {
             this.BoardTiles = new int[4, 4];
             CurrentScore = 0;
-            BoardTiles[0, 0] = 1;
-            BoardTiles[0, 1] = 2;
-            BoardTiles[0, 2] = 3;
-            BoardTiles[0, 3] = 4;
-            BoardTiles[1, 0] = 5;
-            BoardTiles[1, 1] = 6;
-            BoardTiles[1, 2] = 7;
-            BoardTiles[1, 3] = 8;
-            BoardTiles[2, 0] = 9;
-            BoardTiles[2, 1] = 10;
-            BoardTiles[2, 2] = 11;
-            BoardTiles[2, 3] = 12;
-            BoardTiles[3, 0] = 13;
-            BoardTiles[3, 1] = 14;
-            BoardTiles[3, 2] = 15;
-            BoardTiles[3, 3] = 16;
         }
 
         public void DisplayBoard()
@@ -80,6 +64,7 @@ namespace _2048ConsoleGame
                     MoveBoard(Direction.Right);
                 }
             } while (isPlaying);
+
         }
 
         public void InsertTwoOrFour(List<EmptyCells> emptyCells)
@@ -91,6 +76,7 @@ namespace _2048ConsoleGame
             if (SelectIntToInsert == 9) SelectIntToInsert = 4;
             else SelectIntToInsert = 2;
             BoardTiles[SelectedCell.XIndex, SelectedCell.YIndex] = SelectIntToInsert;
+            CurrentScore += SelectIntToInsert;
         }
 
         public void MoveBoard(Direction direction)
@@ -108,34 +94,58 @@ namespace _2048ConsoleGame
             int IncreaseOrDecrease = isPositive ? 1 : -1;
 
             //Function to find the value thats in the cell to be moved into
-            Func<int[,], int, int, int> GetValueInNewCell = isVertical ? new Func<int[,], int, int, int>((i, j, k) => i[k, j]) : new Func<int[,], int, int, int>((i, j, k) => i[k, j]);
+            Func<int[,], int, int, int> GetValueInCell = isVertical ? new Func<int[,], int, int, int>((i, j, k) => i[k, j]) : new Func<int[,], int, int, int>((i, j, k) => i[j, k]);
             //Function to set the value in the new cell
             Action<int[,], int, int, int> SetValueInNewCell = isVertical ? new Action<int[,], int, int, int>((i, j, k, l) => i[k, j] = l) : new Action<int[,], int, int, int>((i, j, k, l) => i[j, k] = l);
-            Func<int[,], int, int, bool> DoValuesMatch = isVertical ? new Func<int[,], int, int, bool>((i, j, k) => i[k, j] == i[k - IncreaseOrDecrease, j]) : new Func<int[,], int, int, bool>((i, j, k) => i[j, k] == i[j, k - IncreaseOrDecrease]);
+            Func<int[,], int, int, bool> DoValuesMatch = isVertical ? new Func<int[,], int, int, bool>((i, j, k) => i[k, j] == i[k, j]) : new Func<int[,], int, int, bool>((i, j, k) => i[j, k] == i[j, k]);
+            Action<int[,], int, int> ResetCell = isVertical ? new Action<int[,], int, int>((i, j, k) => i[k, j] = 0) : new Action<int[,], int, int>((i, j, k) => i[j, k] = 0);
 
             //Allows loop to continue whethers it's looping forward or back
-            bool ContinueLoop(int i) => Math.Min(StartIndex, EndIndex) <= i && Math.Max(StartIndex, EndIndex) >= i;
-            int IncrementIndex(ref int i) => isPositive ? i++ : i--;
+            bool continueLoop(int i) => Math.Min(StartIndex, EndIndex) <= i && Math.Max(StartIndex, EndIndex) >= i;
+            int incrementIndex(ref int i) => isPositive ? i += 1 : i -= 1;
 
-            for (int i = 0;i<4;i++)
+            int NextTileIndex(int i) => isPositive ? i -= 1 : i += 1;
+
+            for (int i = 0; i < 4; i++)
             {
-                for (int j = StartIndex; ContinueLoop(j); IncrementIndex(ref j))
+                for (int j = StartIndex; continueLoop(j); incrementIndex(ref j))
                 {
-                    if (isVertical)
+                    int CurrentCellValue = GetValueInCell(BoardTiles, i, j);
+                    if (CurrentCellValue == 0)
                     {
-                        Console.WriteLine(BoardTiles[j, i]);
-                    } else
+                        continue;
+                    }
+
+                    //Sets index to next tile
+                    int tempJ = j;
+                    //Continue if cell is already add a border
+                    if (!continueLoop(NextTileIndex(tempJ)))
                     {
-                        Console.WriteLine(BoardTiles[i, j]);
+                        continue;
+                    }
+
+                    //Loops while the index is still valid and the next cell contains a 0
+                    do
+                    {
+                        tempJ = NextTileIndex(tempJ);
+                    } while (continueLoop(tempJ) && GetValueInCell(BoardTiles, i, tempJ) == 0);
+
+                    if (continueLoop(tempJ) && CurrentCellValue == GetValueInCell(BoardTiles, i, tempJ))
+                    {
+                        SetValueInNewCell(BoardTiles, i, tempJ, CurrentCellValue * 2);
+                        ResetCell(BoardTiles, i, j);
+                        CurrentScore += CurrentCellValue;
+                    }
+                    else { 
+                        incrementIndex(ref tempJ);
+                        SetValueInNewCell(BoardTiles, i, tempJ, CurrentCellValue);
+                        if(tempJ != j)
+                        {
+                            ResetCell(BoardTiles, i, j);
+                        }
                     }
                 }
             }
-
-            //For each cell in row or column, starting at game edge
-            //if item to move == space to take, multiply them
-            //replace moved cell with 0, check to see if item can move again
-            //If cant move, move to next cell to move and repeat
-            //Move to next row or column and start iteration again
         }
 
         public enum Direction
