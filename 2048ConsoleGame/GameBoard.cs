@@ -44,9 +44,11 @@ namespace _2048ConsoleGame
                 if (emptyCells.Count != 0 && wasMoveValid)
                 {
                     moveBoard.CurrentScore += InsertTwoOrFour(emptyCells);
-                    DisplayBoard();
-                    Console.WriteLine("\n Current score: " + moveBoard.CurrentScore);
                 }
+
+                DisplayBoard();
+                Console.WriteLine("\n Current score: " + moveBoard.CurrentScore);
+
                 var input = Console.ReadKey();
                 if (input.Key == ConsoleKey.UpArrow)
                 {
@@ -64,8 +66,26 @@ namespace _2048ConsoleGame
                 {
                     wasMoveValid = moveBoard.MoveBoard(HelperMethods.Direction.Right, ref BoardTiles);
                 }
+                if (BoardTiles.GetEmpty().Count == 0 && isGameOver(BoardTiles, moveBoard))
+                {
+                    isPlaying = false;
+                }
             } while (isPlaying);
 
+            Console.Clear();
+            Console.WriteLine("You lose press any key to start again");
+        }
+
+        public bool isGameOver(int[,] board, BoardMovement moveBoard)
+        {
+            foreach (HelperMethods.Direction direction in Enum.GetValues(typeof(HelperMethods.Direction)))
+            {
+                if (moveBoard.MoveBoard(direction, ref board))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public int InsertTwoOrFour(List<EmptyCells> emptyCells)
@@ -78,14 +98,6 @@ namespace _2048ConsoleGame
             else SelectIntToInsert = 2;
             BoardTiles[SelectedCell.XIndex, SelectedCell.YIndex] = SelectIntToInsert;
             return SelectIntToInsert;
-        }
-
-        public enum Direction
-        {
-            Up,
-            Down,
-            Left,
-            Right,
         }
     }
 }

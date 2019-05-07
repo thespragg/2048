@@ -10,9 +10,13 @@ namespace _2048ConsoleGame
     {
         static void Main(string[] args)
         {
-            GameBoard gameBoard = new GameBoard();
-            gameBoard.DisplayBoard();
-            gameBoard.PlayGame();
+            while (true) {
+                GameBoard gameBoard = new GameBoard();
+                gameBoard.DisplayBoard();
+                gameBoard.PlayGame();
+                Console.ReadKey();
+            }
+            
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace _2048ConsoleGame
 {
-    class BoardMovement
+    public class BoardMovement
     {
         public int CurrentScore { get; set; }
         public BoardMovement()
@@ -77,10 +77,7 @@ namespace _2048ConsoleGame
                         {
                             ResetCell(BoardTiles, i, j);
                             wasMoveValid = true;
-                        } else
-                        {
-                            wasMoveValid = false;
-                        }
+                        } 
                     }
                 }
             }
