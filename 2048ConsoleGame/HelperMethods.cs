@@ -44,6 +44,14 @@ namespace _2048ConsoleGame
             if (num == 2048) return ConsoleColor.DarkCyan;
             return ConsoleColor.Gray;
         }
+
+        public enum Direction
+        {
+            Up,
+            Down,
+            Left,
+            Right,
+        }
     }
 
     class ColourOutput : IDisposable
@@ -64,4 +72,7 @@ namespace _2048ConsoleGame
         public int XIndex { get; set; }
         public int YIndex { get; set; }
     }
+
+
+    
 }
